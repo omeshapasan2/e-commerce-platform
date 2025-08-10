@@ -17,6 +17,8 @@ const app = express();
 app.use(clerkMiddleware());
 app.use(cors({ origin: process.env.FRONTEND_URL }));
 
+app.get('/health', (_req, res) => res.send('ok'));
+
 app.post(
   "/api/stripe/webhook",
   bodyParser.raw({ type: "application/json" }),
