@@ -3,8 +3,11 @@ import { connectDB } from "./index";
 import Category from "./entities/Category";
 import Product from "./entities/Product";
 import stripe from "../stripe";
+import Color from "./entities/Color";
 
 const CATEGORY_NAMES = ["Socks", "Pants", "T-shirts", "Shoes", "Shorts"];
+
+const COLOR_NAMES = ["Red", "Blue", "Green"];
 
 const ADJECTIVES = [
   "Classic", "Sporty", "Elegant", "Comfy", "Trendy", "Cool", "Premium", "Casual", "Bold", "Vivid",
@@ -21,7 +24,11 @@ function getRandomName(categoryName: string) {
   return `${adj} ${categoryName} ${noun}`;
 }
 
-const createProductsForCategory = async (categoryId: any, categoryName: string) => {
+const createProductsForCategory = async (
+  categoryId: any,
+  categoryName: string,
+  colors: any[]
+) => {
   const products = [];
   for (let i = 0; i < 10; i++) {
 
@@ -38,15 +45,18 @@ const createProductsForCategory = async (categoryId: any, categoryName: string) 
       },
     });
 
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
     products.push({
       categoryId,
+      colorId: color._id,
       name: name,
       price: price,
       description: description,
       image: `https://via.placeholder.com/150?text=${encodeURIComponent(categoryName)}`,
       stock: Math.floor(Math.random() * 50) + 1,
       reviews: [],
-      stripePriceId: stripeProduct.default_price
+      stripePriceId: stripeProduct.default_price,
     });
   }
   await Product.insertMany(products);
@@ -56,10 +66,15 @@ const seed = async () => {
   await connectDB();
   await Category.deleteMany({});
   await Product.deleteMany({});
+  await Color.deleteMany({});
+
+  const colors = await Color.insertMany(
+    COLOR_NAMES.map((name) => ({ name }))
+  );
 
   for (const name of CATEGORY_NAMES) {
     const category = await Category.create({ name });
-    await createProductsForCategory(category._id, name);
+    await createProductsForCategory(category._id, name, colors);
     console.log(`Seeded category: ${name}`);
   }
 
@@ -70,4 +85,4 @@ const seed = async () => {
 seed().catch((err) => {
   console.error(err);
   process.exit(1);
-}); 
+});
