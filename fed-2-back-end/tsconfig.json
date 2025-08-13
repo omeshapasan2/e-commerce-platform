@@ -1,13 +1,19 @@
 {
   "compilerOptions": {
     "sourceMap": true,
+    "rootDir": "src",
     "outDir": "./dist",
     "strict": true,
     "lib": ["esnext"],
+    "module": "commonjs",
+    "target": "es2020",
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "ts-node": {
     "files": true
-  }
+  },
+  "include": ["src"]
 }
