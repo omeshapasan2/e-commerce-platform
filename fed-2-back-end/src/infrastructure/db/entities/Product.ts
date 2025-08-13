@@ -6,6 +6,11 @@ const productSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  colorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Color",
+    default: null,
+  },
   name: {
     type: String,
     required: true,
