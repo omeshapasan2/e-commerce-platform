@@ -2,15 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { Menu, X, ShoppingBag, Search, User } from "lucide-react";
 import { useSelector } from "react-redux";
-// import { useSelector } from "react-redux";
 import { SignedIn, UserButton, SignedOut } from "@clerk/clerk-react";
 import ProductSearchForm from "./ProductSearchForm";
 
 export default function Navigation() {
   const cartItems = useSelector((state) => state.cart.cartItems);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const cartItems = useSelector((state) => state.cart.value);
 
   // Calculate total quantity of items in cart
   const cartItemCount = cartItems.reduce(
@@ -18,94 +15,102 @@ export default function Navigation() {
     0
   );
 
-  // const calculateCartItems = () => {
-  //   const total = 0;
-  //   for (let i = 0; i < array.length; i++) {
-  //     const item = array[i];
-  //     total = total + item.quantity;
-  //   }
-  // };
-
-  // Function href close mobile menu
+  // Function to close mobile menu
   const closeMobileMenu = () => setIsMenuOpen(false);
 
+  // Navigation items
+  const navigationItems = [
+    { path: "/shop/shoes", label: "Shoes" },
+    { path: "/shop/tshirts", label: "T-Shirt" },
+    { path: "/shop/shorts", label: "Shorts" },
+    { path: "/shop/pants", label: "Pants" },
+    { path: "/shop/socks", label: "Socks" },
+  ];
+
   return (
-    <header className="bg-white border-b border-gray-200 px-4 lg:px-16">
-      <div>
-        <div className="flex items-center justify-between h-16">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <Link to="/" className="font-bold text-2xl">
+          <Link 
+            to="/" 
+            className="font-bold text-xl sm:text-2xl text-gray-900 flex-shrink-0"
+          >
             Mebius
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            {[
-              {
-                path: "/shop/shoes",
-                label: "Shoes",
-              },
-              {
-                path: "/shop/tshirts",
-                label: "T-Shirt",
-              },
-              {
-                path: "/shop/shorts",
-                label: "Shorts",
-              },
-              {
-                path: "/shop/pants",
-                label: "Pants",
-              },
-              {
-                path: "/shop/socks",
-                label: "Socks",
-              },
-            ].map((item) => {
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="font-medium hover:text-gray-600"
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <nav className="hidden lg:flex space-x-6 xl:space-x-8">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 py-2"
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Icons */}
-          <div className="flex items-center space-x-4">
-            <ProductSearchForm />
+          {/* Right side icons */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Search - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden sm:block">
+              <ProductSearchForm />
+            </div>
+
+            {/* Cart */}
             <Link
               to="/shop/cart"
-              aria-label="Shopping Bag"
-              className="p-1 relative"
+              aria-label={`Shopping cart with ${cartItemCount} items`}
+              className="p-2 relative hover:bg-gray-100 rounded-full transition-colors duration-200"
             >
-              <ShoppingBag size={20} />
-              <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                {cartItemCount}
-              </span>
+              <ShoppingBag size={20} className="text-gray-700" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs min-w-[18px] h-[18px] flex items-center justify-center rounded-full font-medium">
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
             </Link>
+
+            {/* User Authentication */}
             <SignedIn>
-              <UserButton />
+              <div className="flex items-center">
+                <UserButton />
+              </div>
             </SignedIn>
-            <div className="hidden md:block">
+
+            {/* Desktop Sign In/Up */}
+            <div className="hidden lg:block">
               <SignedOut>
-                <div className="flex items-center gap-4">
-                  <Link to="/sign-in">Sign In</Link>
-                  <Link to="/sign-up">Sign Up</Link>
+                <div className="flex items-center space-x-4">
+                  <Link 
+                    to="/sign-in"
+                    className="text-gray-700 hover:text-gray-900 font-medium transition-colors duration-200"
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    to="/sign-up"
+                    className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium"
+                  >
+                    Sign Up
+                  </Link>
                 </div>
               </SignedOut>
             </div>
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-1"
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
             >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {isMenuOpen ? 
+                <X size={20} className="text-gray-700" /> : 
+                <Menu size={20} className="text-gray-700" />
+              }
             </button>
           </div>
         </div>
@@ -113,33 +118,48 @@ export default function Navigation() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden fixed top-16 left-4 right-4 bg-white z-10">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-            {[
-              { path: "/shop/shoes", label: "Shoes" },
-              { path: "/shop/tshirts", label: "T-Shirt" },
-              { path: "/shop/shorts", label: "Shorts" },
-              { path: "/shop/pants", label: "Pants" },
-              { path: "/shop/socks", label: "Socks" },
-            ].map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="block px-3 py-2 text-base font-medium hover:bg-gray-100 rounded-md"
-                onClick={closeMobileMenu}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-white z-50 border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-4">
+            {/* Mobile Search */}
+            <div className="sm:hidden mb-4 pb-4 border-b border-gray-200">
+              <ProductSearchForm />
+            </div>
 
-          <div className="block md:hidden px-4">
-            <SignedOut>
-              <div className="flex items-center gap-4">
-                <Link to="/sign-in">Sign In</Link>
-                <Link to="/sign-up">Sign Up</Link>
-              </div>
-            </SignedOut>
+            {/* Navigation Links */}
+            <div className="space-y-1">
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors duration-200"
+                  onClick={closeMobileMenu}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile Auth Links */}
+            <div className="lg:hidden mt-6 pt-4 border-t border-gray-200">
+              <SignedOut>
+                <div className="space-y-2">
+                  <Link 
+                    to="/sign-in"
+                    className="block w-full text-center px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                    onClick={closeMobileMenu}
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    to="/sign-up"
+                    className="block w-full text-center px-4 py-3 text-base font-medium bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                    onClick={closeMobileMenu}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              </SignedOut>
+            </div>
           </div>
         </div>
       )}
