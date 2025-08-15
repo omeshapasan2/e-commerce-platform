@@ -6,6 +6,7 @@ import { clerkMiddleware } from "@clerk/express";
 
 import productRouter from "./api/product";
 import categoryRouter from "./api/category";
+import colorRouter from "./api/color";
 import reviewRouter from "./api/review";
 import { orderRouter } from "./api/order";
 import { paymentsRouter } from "./api/payment";
@@ -36,6 +37,7 @@ app.use(clerkMiddleware());
 /** 4) Routers */
 app.use("/api/products", productRouter);
 app.use("/api/categories", categoryRouter);
+app.use("/api/colors", colorRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/payments", paymentsRouter);

@@ -35,6 +35,9 @@ export const Api = createApi({
     getAllCategories: build.query({
       query: () => `/categories`,
     }),
+    getAllColors: build.query({
+      query: () => `/colors`,
+    }),
     createProduct: build.mutation({
       query: (product) => ({
         url: "/products",
@@ -64,4 +67,5 @@ export const {
   useGetCheckoutSessionStatusQuery,
   useCreateProductMutation,
   useGetAllCategoriesQuery,
+  useGetAllColorsQuery,
 } = Api;
