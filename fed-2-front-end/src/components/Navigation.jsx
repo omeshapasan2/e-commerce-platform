@@ -36,7 +36,7 @@ export default function Navigation() {
             to="/" 
             className="font-bold text-xl sm:text-2xl text-gray-900 flex-shrink-0"
           >
-            Mebius
+            ClothLane
           </Link>
 
           {/* Desktop Navigation */}
