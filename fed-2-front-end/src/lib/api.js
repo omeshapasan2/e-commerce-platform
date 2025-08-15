@@ -29,6 +29,16 @@ export const Api = createApi({
     getAllProducts: build.query({
       query: () => `/products`,
     }),
+    getProducts: build.query({
+      query: (params = {}) => {
+        const qs = new URLSearchParams(
+          Object.fromEntries(
+            Object.entries(params).filter(([_, v]) => v != null && v !== "")
+          )
+        ).toString();
+        return qs ? `/products?${qs}` : `/products`;
+      },
+    }),
     getProductsBySearch: build.query({
       query: (query) => `/products/search?search=${query}`,
     }),
@@ -68,4 +78,5 @@ export const {
   useCreateProductMutation,
   useGetAllCategoriesQuery,
   useGetAllColorsQuery,
+  useGetProductsQuery,
 } = Api;

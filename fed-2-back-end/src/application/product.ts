@@ -9,6 +9,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import S3 from "../infrastructure/s3";
 import stripe from "../infrastructure/stripe";
+import Category from "../infrastructure/db/entities/Category";
+import Color from "../infrastructure/db/entities/Color";
 
 const getAllProducts = async (
   req: Request,
@@ -16,14 +18,48 @@ const getAllProducts = async (
   next: NextFunction
 ) => {
   try {
-    const categoryId = req.query.categoryId;
+    // accepted query params
+    const {
+      categoryId,
+      categoryName,
+      colorId,
+      colorName,
+      sort,
+    } = req.query as {
+      categoryId?: string;
+      categoryName?: string;
+      colorId?: string;
+      colorName?: string;
+      sort?: "price_asc" | "price_desc";
+    };
+
+    const filter: Record<string, any> = {};
+
     if (categoryId) {
-      const products = await Product.find({ categoryId });
-      res.json(products);
-    } else {
-      const products = await Product.find();
-      res.json(products);
+      filter.categoryId = categoryId;
+    } else if (categoryName) {
+      const cat = await Category.findOne({
+        name: new RegExp(`^${categoryName}$`, "i"),
+      });
+      if (cat) filter.categoryId = cat._id;
     }
+
+    if (colorId) {
+      filter.colorId = colorId;
+    } else if (colorName) {
+      const col = await Color.findOne({
+        name: new RegExp(`^${colorName}$`, "i"),
+      });
+      if (col) filter.colorId = col._id;
+    }
+
+    // Sorting
+    const sortSpec: Record<string, 1 | -1> = {};
+    if (sort === "price_asc") sortSpec.price = 1;
+    if (sort === "price_desc") sortSpec.price = -1;
+
+    const products = await Product.find(filter).sort(sortSpec);
+    res.json(products);
   } catch (error) {
     next(error);
   }
