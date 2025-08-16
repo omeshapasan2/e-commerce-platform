@@ -12,6 +12,7 @@ interface Product {
   stock: number;
   stripePriceId: string;
   name: string;
+  description: string;
 }
 
 async function fulfillCheckout(sessionId: string) {
