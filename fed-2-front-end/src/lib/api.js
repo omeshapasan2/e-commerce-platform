@@ -42,6 +42,9 @@ export const Api = createApi({
     getProductsBySearch: build.query({
       query: (query) => `/products/search?search=${query}`,
     }),
+    getProductById: build.query({
+      query: (id) => `/products/${id}`,
+    }),
     getAllCategories: build.query({
       query: () => `/categories`,
     }),
@@ -79,4 +82,5 @@ export const {
   useGetAllCategoriesQuery,
   useGetAllColorsQuery,
   useGetProductsQuery,
+  useGetProductByIdQuery,
 } = Api;

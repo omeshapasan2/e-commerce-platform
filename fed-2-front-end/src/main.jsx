@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+// import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { store } from "./lib/store";
 import { Provider } from "react-redux";
 
@@ -18,8 +19,10 @@ import CreateProductPage from "./pages/create-product-page";
 import AdminProtectedLayout from "./layouts/admin-protected.layout";
 import PaymentPage from "./pages/payment.page";
 import CompletePage from "./pages/complete.page";
+import ProductPage from "./pages/product.page";
 
 import { ClerkProvider } from "@clerk/clerk-react";
+
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -40,6 +43,7 @@ createRoot(document.getElementById("root")).render(
                 <Route index element={<ShopPage />} />
                 <Route path="cart" element={<CartPage />} />
                 <Route path=":category" element={<ShopPage />} />
+                <Route path="products/:productId" element={<ProductPage />} />
                 <Route element={<ProtectedLayout />}>
                   <Route path="checkout" element={<CheckoutPage />} />
                   <Route path="payment" element={<PaymentPage />} />

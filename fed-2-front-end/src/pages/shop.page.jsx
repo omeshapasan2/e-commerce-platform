@@ -110,7 +110,12 @@ function ShopPage() {
       {/* Products */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-6 gap-4">
         {products.map((p) => (
-          <article key={p._id} className="border rounded-lg p-3">
+          <Link
+            key={p._id}
+            to={`/shop/products/${p._id}`}
+            className="border rounded-lg p-3 block hover:shadow-sm transition-shadow"
+            aria-label={`View details for ${p.name}`}
+          >
             {p.image && (
               <img
                 src={p.image}
@@ -122,7 +127,7 @@ function ShopPage() {
               <h3 className="font-medium">{p.name}</h3>
               <p className="text-sm opacity-70">${p.price}</p>
             </div>
-          </article>
+          </Link>
         ))}
         {!products.length && <p>No products found.</p>}
       </div>
