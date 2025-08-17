@@ -5,7 +5,7 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
   try {
     const auth = getAuth(req);
 
-    // 1) Try to read role from JWT session claims (both places Clerk might put it)
+    // 1) Try to read role from JWT session claims
     const claimRole =
       (auth.sessionClaims as any)?.metadata?.role ??
       (auth.sessionClaims as any)?.publicMetadata?.role;
@@ -18,7 +18,7 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
       role =
         (user.publicMetadata as any)?.role ??
         (user.privateMetadata as any)?.role ??
-        (user?.unsafeMetadata as any)?.role; // last resort if you used unsafe
+        (user?.unsafeMetadata as any)?.role;
     }
 
     // 3) Enforce

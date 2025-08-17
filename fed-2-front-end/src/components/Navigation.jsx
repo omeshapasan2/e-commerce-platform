@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Menu, X, ShoppingBag, Search, User } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import { FaBox } from "react-icons/fa";
+import { FaBoxesStacked } from "react-icons/fa6";
 import { useSelector } from "react-redux";
-import { SignedIn, UserButton, SignedOut } from "@clerk/clerk-react";
+import { SignedIn, UserButton, SignedOut, useUser } from "@clerk/clerk-react";
 import ProductSearchForm from "./ProductSearchForm";
 
 export default function Navigation() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useUser();
 
   // Calculate total quantity of items in cart
   const cartItemCount = cartItems.reduce(
@@ -17,6 +20,9 @@ export default function Navigation() {
 
   // Function to close mobile menu
   const closeMobileMenu = () => setIsMenuOpen(false);
+
+  // Check if user is an admin
+  const isAdmin = user?.publicMetadata?.role === "admin";
 
   // Navigation items
   const navigationItems = [
@@ -72,6 +78,25 @@ export default function Navigation() {
                 </span>
               )}
             </Link>
+
+            {/* Orders icon ( according to user/admin ) */}
+            {isAdmin ? (
+              <Link
+                to="/admin/orders"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                aria-label="Admin Orders"
+              >
+                <FaBoxesStacked size={20} className="text-gray-700" />
+              </Link>
+            ) : (
+              <Link
+                to="/account/orders"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                aria-label="My Orders"
+              >
+                <FaBox size={20} className="text-gray-700" />
+              </Link>
+            )}
 
             {/* User Authentication */}
             <SignedIn>
