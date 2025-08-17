@@ -6,7 +6,11 @@ import CartItem from "@/components/CartItem";
 function CartPage() {
   const cart = useSelector((state) => state.cart.cartItems);
   console.log(cart);
-  
+
+  const total = cart.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  );
 
   return (
     <main className="px-16 min-h-screen py-8">
@@ -15,6 +19,10 @@ function CartPage() {
         {cart.map((item, index) => (
           <CartItem key={index} item={item} />
         ))}
+      </div>
+
+      <div className="mt-4">
+        <p className="text-xl font-semibold">Total: ${total}</p>
       </div>
 
       <div className="mt-4">

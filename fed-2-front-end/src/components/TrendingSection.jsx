@@ -36,15 +36,10 @@ function TrendingSection() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4 gap-4 md:gap-x-4 md:gap-y-8">
         {filteredProducts?.map((product) => {
           return (
-            <Link
-              key={product._id}
-              to={`/shop/products/${product._id}`}
-              className="border rounded-lg p-3 block hover:shadow-sm transition-shadow"
-              aria-label={`View details for ${product.name}`}
-            >
+            <div>
               {/* Product Card */}
               <SimpleProductCard key={product._id} product={product} />
-            </Link>
+            </div>
           );
         })}
       </div>
