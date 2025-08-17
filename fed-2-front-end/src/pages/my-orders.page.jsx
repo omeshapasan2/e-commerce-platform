@@ -87,7 +87,7 @@ export default function MyOrdersPage() {
             <header className="flex items-start justify-between mb-4">
               <div>
                 <div className="font-medium text-lg mb-1">
-                  Order #{order._id?.slice(-8) || 'Unknown'}
+                  Order: {order._id || 'Unknown'}
                 </div>
                 {order.createdAt && (
                   <div className="text-sm opacity-70">

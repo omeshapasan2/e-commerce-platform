@@ -1,7 +1,20 @@
 import { useGetAllOrdersQuery } from "@/lib/api";
+import { useState } from "react";
 
 export default function AdminOrdersPage() {
   const { data: orders = [], isLoading, isError } = useGetAllOrdersQuery();
+  const [expandedOrders, setExpandedOrders] = useState(new Set());
+
+  // Helper function to toggle expanded state for orders
+  const toggleOrderExpansion = (orderId) => {
+    const newExpanded = new Set(expandedOrders);
+    if (newExpanded.has(orderId)) {
+      newExpanded.delete(orderId);
+    } else {
+      newExpanded.add(orderId);
+    }
+    setExpandedOrders(newExpanded);
+  };
 
   // Helper function to format status display
   const formatStatus = (paymentStatus, orderStatus) => {
@@ -93,7 +106,7 @@ export default function AdminOrdersPage() {
                   <header className="flex items-start justify-between mb-4">
                     <div>
                       <div className="font-medium text-lg mb-1">
-                        Order #{order._id?.slice(-8) || 'Unknown'}
+                        Order: {order._id || 'Unknown'}
                       </div>
                       <div className="text-sm opacity-70 mb-2">
                         User: {order.userId || 'Unknown'}
@@ -183,12 +196,12 @@ export default function AdminOrdersPage() {
                   return (
                     <tr key={order._id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
                       <td className="py-4 px-6">
-                        <div className="font-mono text-sm">
-                          #{order._id?.slice(-8) || 'Unknown'}
+                        <div className="font-mono text-sm break-all">
+                          {order._id || 'Unknown'}
                         </div>
                       </td>
                       <td className="py-4 px-6">
-                        <div className="text-sm truncate max-w-32">
+                        <div className="text-sm break-all">
                           {order.userId || 'Unknown'}
                         </div>
                       </td>
@@ -196,6 +209,7 @@ export default function AdminOrdersPage() {
                         <div className="max-w-xs">
                           {order.items && order.items.length > 0 ? (
                             <div className="space-y-1">
+                              {/* Always show first 2 items */}
                               {order.items.slice(0, 2).map((item, index) => {
                                 const product = item.productId;
                                 return (
@@ -209,10 +223,37 @@ export default function AdminOrdersPage() {
                                   </div>
                                 );
                               })}
+                              
+                              {/* Show remaining items if expanded */}
+                              {expandedOrders.has(order._id) && order.items.length > 2 && (
+                                <>
+                                  {order.items.slice(2).map((item, index) => {
+                                    const product = item.productId;
+                                    return (
+                                      <div key={product?._id || index} className="text-sm">
+                                        <span className="font-medium">
+                                          {product?.name || "Unknown Product"}
+                                        </span>
+                                        <span className="opacity-70">
+                                          {" "}× {item.quantity || 1} — ${product?.price ?? 0}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </>
+                              )}
+                              
+                              {/* Show expand/collapse button if more than 2 items */}
                               {order.items.length > 2 && (
-                                <div className="text-xs opacity-70">
-                                  +{order.items.length - 2} more items
-                                </div>
+                                <button
+                                  onClick={() => toggleOrderExpansion(order._id)}
+                                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                                >
+                                  {expandedOrders.has(order._id) 
+                                    ? "- Show less" 
+                                    : `+${order.items.length - 2} more items`
+                                  }
+                                </button>
                               )}
                             </div>
                           ) : (
