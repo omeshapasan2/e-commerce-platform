@@ -3,56 +3,260 @@ import { useGetAllOrdersQuery } from "@/lib/api";
 export default function AdminOrdersPage() {
   const { data: orders = [], isLoading, isError } = useGetAllOrdersQuery();
 
-  if (isLoading) return <main className="px-4 lg:px-16 py-8">Loading…</main>;
-  if (isError) return <main className="px-4 lg:px-16 py-8">Couldn’t load orders.</main>;
+  // Helper function to format status display
+  const formatStatus = (paymentStatus, orderStatus) => {
+    const payment = paymentStatus || "PENDING";
+    const order = orderStatus || "PENDING";
+    
+    if (payment === "PENDING" && order === "PENDING") {
+      return { payment: "Payment Pending", order: "Order Pending" };
+    }
+    return { payment: `Payment ${payment}`, order: `Order ${order}` };
+  };
+
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    if (status.includes("COMPLETED") || status.includes("DELIVERED")) {
+      return "text-green-600 bg-green-50";
+    } else if (status.includes("FAILED") || status.includes("CANCELLED")) {
+      return "text-red-600 bg-red-50";
+    } else if (status.includes("PENDING")) {
+      return "text-yellow-700 bg-yellow-50";
+    } else if (status.includes("PROCESSING") || status.includes("SHIPPED")) {
+      return "text-blue-600 bg-blue-50";
+    }
+    return "text-gray-600 bg-gray-50";
+  };
+
+  if (isLoading) {
+    return (
+      <main className="px-4 lg:px-16 min-h-screen py-8">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-lg">Loading all orders...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="px-4 lg:px-16 min-h-screen py-8">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-lg text-red-600 mb-4">Couldn't load orders</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <main className="px-4 lg:px-16 py-8">
-      <h1 className="text-2xl font-bold mb-4">All Orders (Admin)</h1>
-
-      {!orders.length && <p>No orders found.</p>}
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="text-left border-b">
-              <th className="py-2 pr-4">Order</th>
-              <th className="py-2 pr-4">User</th>
-              <th className="py-2 pr-4">Items</th>
-              <th className="py-2 pr-4">Amount</th>
-              <th className="py-2 pr-4">Status</th>
-              <th className="py-2 pr-4">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((o) => (
-              <tr key={o._id} className="border-b align-top">
-                <td className="py-2 pr-4 font-mono">…{o._id.slice(-6)}</td>
-                <td className="py-2 pr-4">{o.userId}</td>
-                <td className="py-2 pr-4">
-                  <ul className="space-y-1">
-                    {o.items?.map((it) => {
-                      const p = it.productId;
-                      return (
-                        <li key={p?._id || Math.random()}>
-                          {p?.name || "Product"} × {it.quantity} — ${p?.price ?? 0}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </td>
-                <td className="py-2 pr-4 font-semibold">${o.amount ?? 0}</td>
-                <td className="py-2 pr-4">
-                  {o.paymentStatus} • {o.orderStatus}
-                </td>
-                <td className="py-2 pr-4">
-                  {o.createdAt ? new Date(o.createdAt).toLocaleString() : "-"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <main className="px-4 lg:px-16 min-h-screen py-8">
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+        <h1 className="text-4xl font-bold">All Orders</h1>
+        <div className="flex items-center gap-4">
+          <div className="text-sm opacity-70">
+            {orders.length} {orders.length === 1 ? 'order' : 'orders'} total
+          </div>
+          <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+            Admin View
+          </div>
+        </div>
       </div>
+
+      {!orders.length && (
+        <div className="text-center py-12">
+          <div className="mb-4">
+            <svg className="w-16 h-16 mx-auto opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <p className="text-lg opacity-70">No orders found</p>
+        </div>
+      )}
+
+      {orders.length > 0 && (
+        <>
+          {/* Mobile/Tablet Card View */}
+          <div className="grid gap-6 lg:hidden">
+            {orders.map((order) => {
+              const status = formatStatus(order.paymentStatus, order.orderStatus);
+              
+              return (
+                <article key={order._id} className="border rounded-lg p-6 hover:shadow-sm transition-shadow">
+                  <header className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="font-medium text-lg mb-1">
+                        Order #{order._id?.slice(-8) || 'Unknown'}
+                      </div>
+                      <div className="text-sm opacity-70 mb-2">
+                        User: {order.userId || 'Unknown'}
+                      </div>
+                      {order.createdAt && (
+                        <div className="text-sm opacity-70">
+                          {new Date(order.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-xl mb-2">
+                        ${order.amount?.toFixed?.(2) ?? order.amount ?? '0.00'}
+                      </div>
+                      <div className="space-y-1">
+                        <div className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(status.payment)}`}>
+                          {status.payment}
+                        </div>
+                        <div className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(status.order)}`}>
+                          {status.order}
+                        </div>
+                      </div>
+                    </div>
+                  </header>
+
+                  {order.items && order.items.length > 0 && (
+                    <div>
+                      <h3 className="font-medium mb-3 text-sm opacity-70 uppercase tracking-wide">
+                        Items ({order.items.length})
+                      </h3>
+                      <div className="space-y-2">
+                        {order.items.map((item, index) => {
+                          const product = item.productId;
+                          const itemTotal = ((product?.price ?? 0) * (item.quantity || 1)).toFixed(2);
+                          
+                          return (
+                            <div key={product?._id || index} className="flex gap-3 items-center p-3 bg-gray-50 rounded-lg">
+                              {product?.image && (
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name || 'Product'} 
+                                  className="w-12 h-12 object-cover rounded flex-shrink-0" 
+                                />
+                              )}
+                              <div className="flex-grow min-w-0">
+                                <div className="font-medium text-sm truncate">
+                                  {product?.name || "Unknown Product"}
+                                </div>
+                                <div className="text-xs opacity-70">
+                                  Qty: {item.quantity || 1} × ${product?.price ?? 0} = ${itemTotal}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="min-w-full border rounded-lg overflow-hidden">
+              <thead className="bg-gray-50">
+                <tr className="text-left">
+                  <th className="py-4 px-6 font-semibold text-sm">Order ID</th>
+                  <th className="py-4 px-6 font-semibold text-sm">User</th>
+                  <th className="py-4 px-6 font-semibold text-sm">Items</th>
+                  <th className="py-4 px-6 font-semibold text-sm">Amount</th>
+                  <th className="py-4 px-6 font-semibold text-sm">Status</th>
+                  <th className="py-4 px-6 font-semibold text-sm">Created</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {orders.map((order, index) => {
+                  const status = formatStatus(order.paymentStatus, order.orderStatus);
+                  
+                  return (
+                    <tr key={order._id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                      <td className="py-4 px-6">
+                        <div className="font-mono text-sm">
+                          #{order._id?.slice(-8) || 'Unknown'}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="text-sm truncate max-w-32">
+                          {order.userId || 'Unknown'}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="max-w-xs">
+                          {order.items && order.items.length > 0 ? (
+                            <div className="space-y-1">
+                              {order.items.slice(0, 2).map((item, index) => {
+                                const product = item.productId;
+                                return (
+                                  <div key={product?._id || index} className="text-sm">
+                                    <span className="font-medium">
+                                      {product?.name || "Unknown Product"}
+                                    </span>
+                                    <span className="opacity-70">
+                                      {" "}× {item.quantity || 1} — ${product?.price ?? 0}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              {order.items.length > 2 && (
+                                <div className="text-xs opacity-70">
+                                  +{order.items.length - 2} more items
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-sm opacity-70">No items</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="font-semibold text-lg">
+                          ${order.amount?.toFixed?.(2) ?? order.amount ?? '0.00'}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="space-y-1">
+                          <div className={`text-xs px-2 py-1 rounded-full font-medium inline-block ${getStatusColor(status.payment)}`}>
+                            {status.payment}
+                          </div>
+                          <div className={`text-xs px-2 py-1 rounded-full font-medium inline-block ${getStatusColor(status.order)}`}>
+                            {status.order}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="text-sm">
+                          {order.createdAt 
+                            ? new Date(order.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })
+                            : '-'
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </main>
   );
 }
