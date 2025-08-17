@@ -22,6 +22,8 @@ import CompletePage from "./pages/complete.page";
 import ProductPage from "./pages/product.page";
 
 import { ClerkProvider } from "@clerk/clerk-react";
+import MyOrdersPage from "./pages/my-orders.page";
+import AdminOrdersPage from "./pages/admin-orders.page";
 
 
 // Import your Publishable Key
@@ -50,8 +52,14 @@ createRoot(document.getElementById("root")).render(
                   <Route path="complete" element={<CompletePage />} />
                 </Route>
               </Route>
+
+              <Route element={<ProtectedLayout />}>
+                <Route path="/account/orders" element={<MyOrdersPage />} />
+              </Route>
+
               <Route element={<ProtectedLayout />}>
                 <Route element={<AdminProtectedLayout />}>
+                  <Route path="/admin/orders" element={<AdminOrdersPage />} />
                   <Route
                     path="/admin/products/create"
                     element={<CreateProductPage />}

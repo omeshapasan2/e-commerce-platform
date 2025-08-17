@@ -68,6 +68,13 @@ export const Api = createApi({
     getCheckoutSessionStatus: build.query({
       query: (sessionId) => `/payments/session-status?session_id=${sessionId}`,
     }),
+    getMyOrders: build.query({
+      query: () => `/orders/me`,
+    }),
+    getAllOrders: build.query({
+      query: () => `/orders`,
+    }),
+
   }),
 });
 
@@ -83,4 +90,6 @@ export const {
   useGetAllColorsQuery,
   useGetProductsQuery,
   useGetProductByIdQuery,
+  useGetMyOrdersQuery,
+  useGetAllOrdersQuery,
 } = Api;
