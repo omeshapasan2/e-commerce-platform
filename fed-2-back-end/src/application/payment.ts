@@ -78,6 +78,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
   try {
     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    console.log(`Stripe webhook received: ${event.type}`);
     if (
       event.type === "checkout.session.completed" ||
       event.type === "checkout.session.async_payment_succeeded"
@@ -88,6 +89,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
       return;
     }
   } catch (err) {
+    console.error("Stripe webhook error:", err);
     // @ts-ignore
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
