@@ -98,6 +98,19 @@ export default function Navigation() {
               </Link>
             )}
 
+            {/* Admin Sales - Temp */}
+            {isAdmin && (
+              <Link
+                to="/admin/sales"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                aria-label="Admin Sales"
+                title="Sales Dashboard"
+              >
+                <span className="font-medium text-gray-700">Sales</span>
+              </Link>
+            )}
+
+
             {/* User Authentication */}
             <SignedIn>
               <div className="flex items-center">

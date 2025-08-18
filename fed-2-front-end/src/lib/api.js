@@ -74,6 +74,9 @@ export const Api = createApi({
     getAllOrders: build.query({
       query: () => `/orders`,
     }),
+    getDailySales: build.query({
+      query: (range = "7d") => `/orders/daily-sales?range=${range}`,
+    }),
 
   }),
 });
@@ -92,4 +95,5 @@ export const {
   useGetProductByIdQuery,
   useGetMyOrdersQuery,
   useGetAllOrdersQuery,
+  useGetDailySalesQuery,
 } = Api;

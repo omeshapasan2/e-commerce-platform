@@ -77,6 +77,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
   let event;
 
   try {
+    console.log("Stripe webhook endpoint invoked");
     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
     console.log(`Stripe webhook received: ${event.type}`);
     if (
