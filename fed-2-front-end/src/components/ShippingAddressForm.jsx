@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 const shippingAddresFormSchema = z.object({
   line_1: z.string().min(1).max(50),
@@ -116,7 +117,15 @@ function ShippingAddressForm() {
           )}
         />
         <div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <Spinner variant="ellipsis" size={16} />
+              </div>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </div>
       </form>
     </Form>
