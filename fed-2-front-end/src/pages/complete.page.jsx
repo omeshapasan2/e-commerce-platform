@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useGetCheckoutSessionStatusQuery } from "@/lib/api";
 import { Link, Navigate, useSearchParams } from "react-router";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -8,11 +9,14 @@ function CompletePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
-  const { data, isLoading, isError } =
-    useGetCheckoutSessionStatusQuery(sessionId);
+  const { data, isLoading: apiLoading, isError } = useGetCheckoutSessionStatusQuery(sessionId);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (apiLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner variant="ellipsis" size={32} />
+      </div>
+    );
   }
 
   if (isError) {

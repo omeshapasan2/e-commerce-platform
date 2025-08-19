@@ -6,6 +6,7 @@ import {
 } from "@/lib/api";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import ProductSearchForm from "@/components/ProductSearchForm";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 // Function to convert a string to a url friendly format
 const toSlug = (s = "") => s.toLowerCase().trim().replace(/\s+/g, "-");
@@ -55,8 +56,16 @@ function ShopPage() {
     setSearchParams(searchParams, { replace: true });
   };
 
-  // Shows “Loading…” while waiting for the server to return products. - Replace with a spinner
-  if (isLoading) return <p>Loading…</p>;
+  if (isLoading) {
+    return (
+      <main className="px-4 lg:px-16 min-h-screen py-8">
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Spinner variant="ellipsis" size={32} />
+        </div>
+      </main>
+    );
+  }
+
   // If there was an error, show an error message
   if (isError) return <p>Something went wrong.</p>;
 

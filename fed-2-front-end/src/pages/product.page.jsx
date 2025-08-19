@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useGetProductByIdQuery } from "@/lib/api";
 import { addToCart } from "@/lib/features/cartSlice";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 export default function ProductPage() {
   const { productId } = useParams();
@@ -13,7 +14,16 @@ export default function ProductPage() {
     dispatch(addToCart(product));
   };
 
-  if (isLoading) return <main className="px-4 lg:px-16 py-8">Loading…</main>;
+  if (isLoading) {
+    return (
+      <main className="px-4 lg:px-16 min-h-screen py-8">
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Spinner variant="ellipsis" size={32} />
+        </div>
+      </main>
+    );
+  }
+
   if (isError || !product) return <main className="px-4 lg:px-16 py-8">Product not found.</main>;
 
   return (

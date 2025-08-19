@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, Line, XAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 const TZ = "Asia/Colombo";
 
@@ -62,7 +63,12 @@ export default function AdminSalesPage() {
         </CardHeader>
 
         <CardContent className="px-2 sm:p-6">
-          {isLoading && <div className="text-sm opacity-70 px-2 py-4">Loading…</div>}
+          {isLoading && (
+            <div className="flex items-center justify-center h-[300px]">
+              <Spinner variant="ellipsis" size={32} />
+            </div>
+          )}
+
           {isError && (
             <div className="text-sm text-red-600 px-2 py-4">
               Couldn’t load sales data

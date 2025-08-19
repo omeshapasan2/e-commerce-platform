@@ -1,5 +1,6 @@
 import { useGetAllOrdersQuery } from "@/lib/api";
 import { useState } from "react";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 export default function AdminOrdersPage() {
   const { data: orders = [], isLoading, isError } = useGetAllOrdersQuery();
@@ -44,8 +45,8 @@ export default function AdminOrdersPage() {
   if (isLoading) {
     return (
       <main className="px-4 lg:px-16 min-h-screen py-8">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-lg">Loading all orders...</p>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Spinner variant="ellipsis" size={32} />
         </div>
       </main>
     );
