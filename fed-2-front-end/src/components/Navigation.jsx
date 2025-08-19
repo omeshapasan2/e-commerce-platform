@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { FaBox } from "react-icons/fa";
 import { FaBoxesStacked } from "react-icons/fa6";
+import { MdAdminPanelSettings } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { SignedIn, UserButton, SignedOut, useUser } from "@clerk/clerk-react";
 import ProductSearchForm from "./ProductSearchForm";
@@ -79,34 +80,24 @@ export default function Navigation() {
               )}
             </Link>
 
-            {/* Orders icon ( according to user/admin ) */}
-            {isAdmin ? (
-              <Link
-                to="/admin/orders"
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                aria-label="Admin Orders"
-              >
-                <FaBoxesStacked size={20} className="text-gray-700" />
-              </Link>
-            ) : (
-              <Link
-                to="/account/orders"
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                aria-label="My Orders"
-              >
-                <FaBox size={20} className="text-gray-700" />
-              </Link>
-            )}
+            {/* User Orders */}
+            <Link
+              to="/account/orders"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              aria-label="My Orders"
+            >
+              <FaBox size={18} className="text-gray-700" />
+            </Link>
 
-            {/* Admin Sales - Temp */}
+            {/* Admin Dashboard */}
             {isAdmin && (
               <Link
-                to="/admin/sales"
+                to="/admin/dashboard"
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                aria-label="Admin Sales"
-                title="Sales Dashboard"
+                aria-label="Admin Dashboard"
+                title="Admin Dashboard"
               >
-                <span className="font-medium text-gray-700">Sales</span>
+                <MdAdminPanelSettings size={25} className="text-gray-700" />
               </Link>
             )}
 

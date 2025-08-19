@@ -25,6 +25,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import MyOrdersPage from "./pages/my-orders.page";
 import AdminOrdersPage from "./pages/admin-orders.page";
 import AdminSalesPage from "./pages/admin-sales.page";
+import AdminDashboardPage from "./pages/admin-dashboard.page";
 
 
 // Import your Publishable Key
@@ -40,6 +41,8 @@ createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         <BrowserRouter>
           <Routes>
+
+            {/* Public Routes */}
             <Route element={<RootLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/shop">
@@ -53,24 +56,30 @@ createRoot(document.getElementById("root")).render(
                   <Route path="complete" element={<CompletePage />} />
                 </Route>
               </Route>
-
+              
+              {/* For Signed In Customers */}
               <Route element={<ProtectedLayout />}>
                 <Route path="/account/orders" element={<MyOrdersPage />} />
               </Route>
 
               <Route element={<ProtectedLayout />}>
+
+                {/* For Admins */}
                 <Route element={<AdminProtectedLayout />}>
+                  <Route path="/admin/dashboard" element={<AdminDashboardPage />}/>
                   <Route path="/admin/orders" element={<AdminOrdersPage />} />
                   <Route path="/admin/sales" element={<AdminSalesPage />} />
-                  <Route
-                    path="/admin/products/create"
-                    element={<CreateProductPage />}
-                  />
+                  <Route path="/admin/products/create" element={<CreateProductPage />} />
                 </Route>
+
               </Route>
+
             </Route>
+            
+            {/* Authentication Routes */}
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/sign-in" element={<SignInPage />} />
+
           </Routes>
         </BrowserRouter>
       </Provider>
