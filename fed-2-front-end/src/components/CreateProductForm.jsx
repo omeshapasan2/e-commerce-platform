@@ -48,8 +48,8 @@ function CreateProductForm({ categories }) {
       name: "",
       description: "",
       image: "",
-      stock: undefined,
-      price: undefined,
+      stock: "",
+      price: "",
     },
     mode: "onBlur",
   });
@@ -59,7 +59,14 @@ function CreateProductForm({ categories }) {
   const onSubmit = async (values) => {
     try {
       await createProduct(values).unwrap();
-      form.reset();
+      form.reset({
+        categoryId: "",
+        name: "",
+        description: "",
+        image: "",
+        stock: "",
+        price: "",
+      });
       console.log(values);
     } catch (error) {
       console.log(error);
@@ -78,7 +85,7 @@ function CreateProductForm({ categories }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select  onValueChange={field.onChange} defaultValue={field.value}>
+              <Select  value={field.value ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger className={"w-full"}>
                     <SelectValue placeholder="Select a category" />
@@ -145,10 +152,8 @@ function CreateProductForm({ categories }) {
                 <Input
                   type="number"
                   placeholder="Enter stock qunatity"
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(parseInt(e.target.value) || 0);
-                  }}
+                  value={field.value ?? ""}
+                  onChange={(e) => field.onChange(e.target.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -166,10 +171,8 @@ function CreateProductForm({ categories }) {
                   type="number"
                   step="0.01"
                   placeholder="This is the product price"
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(parseFloat(e.target.value) || 0);
-                  }}
+                  value={field.value ?? ""}
+                  onChange={(e) => field.onChange(e.target.value)}
                 />
               </FormControl>
               <FormMessage />
