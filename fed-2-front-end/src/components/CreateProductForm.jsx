@@ -12,9 +12,7 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useCreateProductMutation } from "../lib/api";
-
 import ImageInput from "./ImageInput";
-
 import {
   Select,
   SelectContent,
@@ -25,26 +23,44 @@ import {
 import { Textarea } from "./ui/textarea";
 
 const createProductFormSchema = z.object({
-  categoryId: z.string().min(1),
-  name: z.string().min(1),
-  description: z.string().min(1),
-  image: z.string().min(1),
-  stock: z.number(),
-  price: z.number().nonnegative(),
+  categoryId: z.string().min(1, "Category is required"),
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  image: z.string().url("Image URL is invalid").min(1, "Image is required"),
+  stock: z.preprocess(
+    (v) => (v === "" || v == null ? undefined : Number(v)),
+    z.number({ required_error: "Stock is required" })
+      .int("Stock must be an integer")
+      .positive("Stock must be greater than 0")
+  ),
+  price: z.preprocess(
+    (v) => (v === "" || v == null ? undefined : Number(v)),
+    z.number({ required_error: "Price is required" })
+      .positive("Price must be greater than 0")
+  ),
 });
 
 function CreateProductForm({ categories }) {
   const form = useForm({
     resolver: zodResolver(createProductFormSchema),
+    defaultValues: {
+      categoryId: "",
+      name: "",
+      description: "",
+      image: "",
+      stock: undefined,
+      price: undefined,
+    },
+    mode: "onBlur",
   });
 
   const [createProduct, { isLoading }] = useCreateProductMutation();
 
   const onSubmit = async (values) => {
     try {
+      await createProduct(values).unwrap();
+      form.reset();
       console.log(values);
-
-      // await createProduct(values).unwrap();
     } catch (error) {
       console.log(error);
     }
