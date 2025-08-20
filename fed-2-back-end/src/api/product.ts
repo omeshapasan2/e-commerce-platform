@@ -19,7 +19,8 @@ const validateImageFileType: RequestHandler = (req, res, next) => {
     typeof fileType === "string" &&
     /^image\/(png|jpe?g|webp|gif|svg\+xml)$/.test(fileType);
   if (!ok) {
-    return res.status(400).json({ message: "Invalid or missing image file type" });
+    res.status(400).json({ message: "Invalid or missing image file type" });
+    return;
   }
   next();
 };
