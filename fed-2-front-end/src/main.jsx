@@ -26,6 +26,8 @@ import MyOrdersPage from "./pages/my-orders.page";
 import AdminOrdersPage from "./pages/admin-orders.page";
 import AdminSalesPage from "./pages/admin-sales.page";
 import AdminDashboardPage from "./pages/admin-dashboard.page";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 // Import your Publishable Key
@@ -40,6 +42,7 @@ createRoot(document.getElementById("root")).render(
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
       <Provider store={store}>
         <BrowserRouter>
+          <ToastContainer />
           <Routes>
 
             {/* Public Routes */}

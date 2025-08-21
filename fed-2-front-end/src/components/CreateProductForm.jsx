@@ -21,6 +21,8 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { toast } from "react-toastify";
 
 const createProductFormSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
@@ -59,6 +61,7 @@ function CreateProductForm({ categories }) {
   const onSubmit = async (values) => {
     try {
       await createProduct(values).unwrap();
+      toast.success("Product created successfully");
       form.reset({
         categoryId: "",
         name: "",
@@ -70,6 +73,7 @@ function CreateProductForm({ categories }) {
       console.log(values);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to create product");
     }
   };
 
@@ -180,7 +184,15 @@ function CreateProductForm({ categories }) {
           )}
         />
         <div>
-          <Button type="submit">Create Product</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <Spinner variant="ellipsis" size={16} />
+              </div>
+            ) : (
+              "Create Product"
+            )}
+          </Button>
         </div>
       </form>
     </Form>
