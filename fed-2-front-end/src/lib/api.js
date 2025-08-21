@@ -65,6 +65,13 @@ export const Api = createApi({
         body: order,
       }),
     }),
+    createReview: build.mutation({
+      query: ({ productId, review, rating }) => ({
+        url: "/reviews",
+        method: "POST",
+        body: { productId, review, rating },
+      }),
+    }),
     getCheckoutSessionStatus: build.query({
       query: (sessionId) => `/payments/session-status?session_id=${sessionId}`,
     }),
@@ -87,6 +94,7 @@ export const {
   useGetAllProductsQuery,
   useGetProductsBySearchQuery,
   useCreateOrderMutation,
+  useCreateReviewMutation,
   useGetCheckoutSessionStatusQuery,
   useCreateProductMutation,
   useGetAllCategoriesQuery,
