@@ -66,12 +66,42 @@ export const Api = createApi({
       }),
     }),
     createReview: build.mutation({
-      query: ({ productId, review, rating }) => ({
+      query: ({ productId, review, rating, userId, userName, userImage }) => ({
         url: "/reviews",
         method: "POST",
-        body: { productId, review, rating },
+        body: { productId, review, rating, userId, userName, userImage },
       }),
+
+      invalidatesTags: (result, error, { productId }) => [
+        { type: 'Product', id: productId },
+        'Review'
+      ],
     }),
+
+    getReviewsByProduct: build.query({
+      query: (productId) => `/reviews/product/${productId}`,
+      providesTags: (result, error, productId) => [
+        { type: 'Review', id: productId }
+      ],
+    }),
+
+    updateReview: build.mutation({
+      query: ({ reviewId, review, rating }) => ({
+        url: `/reviews/${reviewId}`,
+        method: "PUT",
+        body: { review, rating },
+      }),
+      invalidatesTags: ['Review', 'Product'],
+    }),
+
+    deleteReview: build.mutation({
+      query: (reviewId) => ({
+        url: `/reviews/${reviewId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Review', 'Product'],
+    }),
+
     getCheckoutSessionStatus: build.query({
       query: (sessionId) => `/payments/session-status?session_id=${sessionId}`,
     }),
@@ -95,6 +125,9 @@ export const {
   useGetProductsBySearchQuery,
   useCreateOrderMutation,
   useCreateReviewMutation,
+  useGetReviewsByProductQuery,
+  useUpdateReviewMutation,
+  useDeleteReviewMutation,
   useGetCheckoutSessionStatusQuery,
   useCreateProductMutation,
   useGetAllCategoriesQuery,
