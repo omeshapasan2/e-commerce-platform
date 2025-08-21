@@ -1,12 +1,20 @@
 import { useParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useGetProductByIdQuery } from "@/lib/api";
+import { useGetProductByIdQuery, useCreateReviewMutation } from "@/lib/api";
 import { addToCart } from "@/lib/features/cartSlice";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import ReviewList from "@/components/ReviewList";
+import ReviewForm from "@/components/ReviewForm";
 
 export default function ProductPage() {
   const { productId } = useParams();
-  const { data: product, isLoading, isError } = useGetProductByIdQuery(productId);
+  const {
+    data: product,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetProductByIdQuery(productId);
+  const [createReview, { isLoading: isReviewLoading }] = useCreateReviewMutation();
   const dispatch = useDispatch();
 
   const onAddToCart = () => {
@@ -26,6 +34,15 @@ export default function ProductPage() {
 
   if (isError || !product) return <main className="px-4 lg:px-16 py-8">Product not found.</main>;
 
+  const handleReviewSubmit = async (values) => {
+    try {
+      await createReview({ ...values, productId }).unwrap();
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="px-4 lg:px-16 py-8">
       <nav className="text-sm opacity-70 mb-4">
@@ -35,7 +52,12 @@ export default function ProductPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="border rounded-lg p-3">
           {product.image ? (
-            <img src={product.image} alt={product.name} className="w-full object-cover rounded-md" style={{ aspectRatio: "1/1" }} />
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full object-cover rounded-md"
+              style={{ aspectRatio: "1/1" }}
+            />
           ) : (
             <div className="w-full aspect-square bg-gray-100 rounded-md grid place-items-center">No image</div>
           )}
@@ -43,15 +65,29 @@ export default function ProductPage() {
 
         <div>
           <h1 className="text-3xl font-bold">{product.name}</h1>
-          {product.description && <p className="mt-3 text-base opacity-80">{product.description}</p>}
+          {product.description && (
+            <p className="mt-3 text-base opacity-80">{product.description}</p>
+          )}
           <div className="mt-4 text-2xl font-semibold">${product.price}</div>
 
           <div className="mt-6 flex gap-3">
-            <button onClick={onAddToCart} className="px-5 py-3 rounded-lg bg-black text-white">Add to Cart</button>
-            <Link to="/shop" className="px-5 py-3 rounded-lg border">Continue Shopping</Link>
+            <button
+              onClick={onAddToCart}
+              className="px-5 py-3 rounded-lg bg-black text-white"
+            >
+              Add to Cart
+            </button>
+            <Link to="/shop" className="px-5 py-3 rounded-lg border">
+              Continue Shopping
+            </Link>
           </div>
         </div>
       </div>
+      <ReviewList reviews={product.reviews} />
+      <ReviewForm
+        onSubmit={handleReviewSubmit}
+        isLoading={isReviewLoading}
+      />
     </main>
   );
 }
