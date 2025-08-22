@@ -23,10 +23,6 @@ const reviewSchema = new mongoose.Schema({
     type: String,
     default: null, // Profile picture URL
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 }, {
   timestamps: true,
 });

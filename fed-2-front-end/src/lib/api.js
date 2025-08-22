@@ -33,7 +33,7 @@ export const Api = createApi({
       query: (params = {}) => {
         const qs = new URLSearchParams(
           Object.fromEntries(
-            Object.entries(params).filter(([_, v]) => v != null && v !== "")
+            Object.entries(params).filter(([, v]) => v != null && v !== "")
           )
         ).toString();
         return qs ? `/products?${qs}` : `/products`;
@@ -44,6 +44,7 @@ export const Api = createApi({
     }),
     getProductById: build.query({
       query: (id) => `/products/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Product', id }],
     }),
     getAllCategories: build.query({
       query: () => `/categories`,
@@ -66,10 +67,10 @@ export const Api = createApi({
       }),
     }),
     createReview: build.mutation({
-      query: ({ productId, review, rating, userId, userName, userImage }) => ({
+      query: ({ productId, review, rating, userName, userImage }) => ({
         url: "/reviews",
         method: "POST",
-        body: { productId, review, rating, userId, userName, userImage },
+        body: { productId, review, rating, userName, userImage },
       }),
 
       invalidatesTags: (result, error, { productId }) => [

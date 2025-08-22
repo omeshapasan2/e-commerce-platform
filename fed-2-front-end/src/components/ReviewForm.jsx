@@ -15,8 +15,8 @@ function ReviewForm({ onSubmit, isLoading }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!rating || !review) return;
-    onSubmit({ review, rating: Number(rating) });
+    if (!rating || !review.trim()) return;
+    onSubmit({ review: review.trim(), rating: Number(rating) });
     setReview("");
     setRating("");
   };

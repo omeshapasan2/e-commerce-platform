@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
 import { useGetProductByIdQuery, useCreateReviewMutation } from "@/lib/api";
 import { Star, ShoppingCart, ArrowLeft, Package, Users, MessageCircle, Calendar } from "lucide-react";
+import { useUser } from "@clerk/clerk-react";
 
 function StarRating({ rating, showNumber = false, size = "w-4 h-4" }) {
   return (
@@ -153,6 +154,7 @@ function ReviewList({ reviews = [] }) {
 export default function ProductPage() {
   const { productId } = useParams();
   const dispatch = useDispatch();
+  const { user } = useUser()
 
   // Fetch product from API (RTK Query)
   const {
@@ -172,7 +174,12 @@ export default function ProductPage() {
 
   const handleReviewSubmit = async (values) => {
     try {
-      await createReview({ ...values, productId }).unwrap();
+      await createReview({
+        ...values,
+        productId,
+        userName: user.fullName,
+        userImage: user.imageUrl,
+      }).unwrap();
       // Refetch to show the new review right away
       refetch();
     } catch (error) {
