@@ -4,19 +4,17 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
 import { useGetProductByIdQuery, useCreateReviewMutation } from "@/lib/api";
 import { Star, ShoppingCart, ArrowLeft, Package, Users, MessageCircle, Calendar } from "lucide-react";
+import StarRating from "@/components/StarRating";
 import { useUser } from "@clerk/clerk-react";
 
-function StarRating({ rating, showNumber = false, size = "w-4 h-4" }) {
+// Display-only stars (old version, renamed)
+function StaticStarRating({ rating, showNumber = false, size = "w-4 h-4" }) {
   return (
     <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
+      {[1, 2, 3, 4, 5].map((s) => (
         <Star
-          key={star}
-          className={`${size} ${
-            star <= rating
-              ? "fill-black text-black"
-              : "fill-gray-300 text-gray-300"
-          }`}
+          key={s}
+          className={`${size} ${s <= rating ? "fill-black text-black" : "fill-gray-300 text-gray-300"}`}
         />
       ))}
       {showNumber && <span className="ml-2 text-sm text-gray-600">({rating})</span>}
@@ -26,14 +24,14 @@ function StarRating({ rating, showNumber = false, size = "w-4 h-4" }) {
 
 function ReviewForm({ onSubmit, isLoading }) {
   const [review, setReview] = useState("");
-  const [rating, setRating] = useState("");
+  const [rating, setRating] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!rating || !review.trim()) return;
-    onSubmit({ review: review.trim(), rating: Number(rating) });
+    onSubmit({ review: review.trim(), rating });
     setReview("");
-    setRating("");
+    setRating(0);
   };
 
   return (
@@ -54,19 +52,19 @@ function ReviewForm({ onSubmit, isLoading }) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">Rating</label>
-          <select 
-            value={rating} 
-            onChange={(e) => setRating(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-          >
-            <option value="">Select a rating</option>
-            {[5, 4, 3, 2, 1].map((n) => (
-              <option key={n} value={String(n)}>
-                {n} star{n !== 1 ? 's' : ''}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="review-stars" className="block text-sm font-medium mb-2">
+            Rating
+          </label>
+          <StarRating
+            id="review-stars"
+            value={rating}
+            onChange={setRating}
+            max={5}
+            size={28}
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            {rating ? `You selected ${rating} star${rating === 1 ? "" : "s"}.` : "Click or use arrow keys to set your rating."}
+          </p>
         </div>
         <button
           onClick={handleSubmit}
@@ -101,7 +99,7 @@ function ReviewList({ reviews = [] }) {
           Customer Reviews
         </h3>
         <div className="flex items-center gap-3">
-          <StarRating rating={Math.round(averageRating)} showNumber size="w-5 h-5" />
+          <StaticStarRating rating={Math.round(averageRating)} showNumber size="w-5 h-5" />
           <span className="text-sm text-gray-600">
             {averageRating.toFixed(1)} • {reviews.length} review{reviews.length !== 1 ? 's' : ''}
           </span>
@@ -130,7 +128,7 @@ function ReviewList({ reviews = [] }) {
                   <div>
                     <h4 className="font-semibold text-gray-900">{review.userName}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <StarRating rating={review.rating} />
+                      <StaticStarRating rating={review.rating} />
                       {review.createdAt && (
                         <span className="text-xs text-gray-500 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
@@ -273,10 +271,12 @@ export default function ProductPage() {
           {/* Product Info */}
           <div className="space-y-6">
             <div>
+              {/* Product Name */}
               <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+
+              {/* Reviews Count */}
               {product.reviews?.length > 0 && (
                 <div className="flex items-center gap-4 mb-4">
-                  <StarRating rating={Math.round(averageRating)} showNumber size="w-5 h-5" />
                   <span className="text-gray-600">
                     {product.reviews.length} review{product.reviews.length !== 1 ? 's' : ''}
                   </span>
