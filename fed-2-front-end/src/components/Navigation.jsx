@@ -28,7 +28,7 @@ export default function Navigation() {
   // Navigation items
   const navigationItems = [
     { path: "/shop/shoes", label: "Shoes" },
-    { path: "/shop/tshirts", label: "T-Shirt" },
+    { path: "/shop/t-shirts", label: "T-Shirt" },
     { path: "/shop/shorts", label: "Shorts" },
     { path: "/shop/pants", label: "Pants" },
     { path: "/shop/socks", label: "Socks" },

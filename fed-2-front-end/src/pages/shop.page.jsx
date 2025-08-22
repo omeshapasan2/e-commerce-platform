@@ -7,6 +7,7 @@ import {
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import ProductSearchForm from "@/components/ProductSearchForm";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import SimpleProductCard from "@/components/SimpleProductCard";
 
 // Function to convert a string to a url friendly format
 const toSlug = (s = "") => s.toLowerCase().trim().replace(/\s+/g, "-");
@@ -119,24 +120,7 @@ function ShopPage() {
       {/* Products */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-6 gap-4">
         {products.map((p) => (
-          <Link
-            key={p._id}
-            to={`/shop/products/${p._id}`}
-            className="border rounded-lg p-3 block hover:shadow-sm transition-shadow"
-            aria-label={`View details for ${p.name}`}
-          >
-            {p.image && (
-              <img
-                src={p.image}
-                alt={p.name}
-                className="w-full aspect-square object-cover rounded-md"
-              />
-            )}
-            <div className="mt-3">
-              <h3 className="font-medium">{p.name}</h3>
-              <p className="text-sm opacity-70">${p.price}</p>
-            </div>
-          </Link>
+          <SimpleProductCard key={p._id} product={p} />
         ))}
         {!products.length && <p>No products found.</p>}
       </div>
