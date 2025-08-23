@@ -231,22 +231,31 @@ export default function AdminOrdersPage() {
                           <div>{address.phone || 'N/A'}</div>
                         </div>
                       </td>
-                      {/* Items with expand/collapse */}
+                      {/* Items with expand/collapse and images */}
                       <td className="py-4 px-6">
-                        <div className="max-w-xs">
+                        <div className="max-w-sm">
                           {order.items && order.items.length > 0 ? (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               {/* Always show first 2 items */}
                               {order.items.slice(0, 2).map((item, index) => {
                                 const product = item.productId;
                                 return (
-                                  <div key={product?._id || index} className="text-sm">
-                                    <span className="font-medium">
-                                      {product?.name || "Unknown Product"}
-                                    </span>
-                                    <span className="opacity-70">
-                                      {" "}× {item.quantity || 1} — ${product?.price ?? 0}
-                                    </span>
+                                  <div key={product?._id || index} className="flex gap-2 items-center">
+                                    {product?.image && (
+                                      <img 
+                                        src={product.image} 
+                                        alt={product.name || 'Product'} 
+                                        className="w-8 h-8 object-cover rounded flex-shrink-0" 
+                                      />
+                                    )}
+                                    <div className="flex-grow min-w-0">
+                                      <div className="text-sm font-medium truncate">
+                                        {product?.name || "Unknown Product"}
+                                      </div>
+                                      <div className="text-xs opacity-70">
+                                        Qty: {item.quantity || 1} × ${product?.price ?? 0}
+                                      </div>
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -257,13 +266,22 @@ export default function AdminOrdersPage() {
                                   {order.items.slice(2).map((item, index) => {
                                     const product = item.productId;
                                     return (
-                                      <div key={product?._id || index} className="text-sm">
-                                        <span className="font-medium">
-                                          {product?.name || "Unknown Product"}
-                                        </span>
-                                        <span className="opacity-70">
-                                          {" "}× {item.quantity || 1} — ${product?.price ?? 0}
-                                        </span>
+                                      <div key={product?._id || index} className="flex gap-2 items-center">
+                                        {product?.image && (
+                                          <img 
+                                            src={product.image} 
+                                            alt={product.name || 'Product'} 
+                                            className="w-8 h-8 object-cover rounded flex-shrink-0" 
+                                          />
+                                        )}
+                                        <div className="flex-grow min-w-0">
+                                          <div className="text-sm font-medium truncate">
+                                            {product?.name || "Unknown Product"}
+                                          </div>
+                                          <div className="text-xs opacity-70">
+                                            Qty: {item.quantity || 1} × ${product?.price ?? 0}
+                                          </div>
+                                        </div>
                                       </div>
                                     );
                                   })}
