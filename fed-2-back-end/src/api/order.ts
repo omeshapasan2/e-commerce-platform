@@ -131,6 +131,7 @@ orderRouter.get(
       const orders = await Order.find()
         .sort({ createdAt: -1 })
         .populate("items.productId", "name price image")
+        .populate("addressId", "line_1 line_2 city phone")
         .lean();
 
       const withTotals = orders.map((o: any) => {
@@ -140,7 +141,8 @@ orderRouter.get(
           const qty = typeof it.quantity === "number" ? it.quantity : 0;
           return sum + unit * qty;
         }, 0);
-        return { ...o, amount };
+        const { addressId, ...rest } = o;
+        return { ...rest, address: addressId, amount };
       });
 
       res.json(withTotals);

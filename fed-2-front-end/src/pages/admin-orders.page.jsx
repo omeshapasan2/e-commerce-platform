@@ -101,7 +101,7 @@ export default function AdminOrdersPage() {
           <div className="grid gap-6 lg:hidden">
             {orders.map((order) => {
               const status = formatStatus(order.paymentStatus, order.orderStatus);
-              const address = order.addressId || {};
+              const address = order.address || {};
               
               return (
                 <article key={order._id} className="border rounded-lg p-6 hover:shadow-sm transition-shadow">
@@ -206,7 +206,7 @@ export default function AdminOrdersPage() {
               <tbody className="divide-y divide-gray-200">
                 {orders.map((order, index) => {
                   const status = formatStatus(order.paymentStatus, order.orderStatus);
-                  const address = order.addressId || {};
+                  const address = order.address || {};
                   
                   return (
                     <tr key={order._id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
@@ -321,7 +321,7 @@ export default function AdminOrdersPage() {
                           }
                         </div>
                       </td>
-                      
+
                     </tr>
                   );
                 })}
