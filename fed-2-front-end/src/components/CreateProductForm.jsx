@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 
 const createProductFormSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
+  colorId: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   image: z.string().url("Image URL is invalid").min(1, "Image is required"),
@@ -42,11 +43,12 @@ const createProductFormSchema = z.object({
   ),
 });
 
-function CreateProductForm({ categories }) {
+function CreateProductForm({ categories, colors }) {
   const form = useForm({
     resolver: zodResolver(createProductFormSchema),
     defaultValues: {
       categoryId: "",
+      colorId: "",
       name: "",
       description: "",
       image: "",
@@ -64,6 +66,7 @@ function CreateProductForm({ categories }) {
       toast.success("Product created successfully");
       form.reset({
         categoryId: "",
+        colorId: "",
         name: "",
         description: "",
         image: "",
@@ -86,8 +89,10 @@ function CreateProductForm({ categories }) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Category and Name Row */}
+          {/* Category, Color and Name Row */}
           <div className="grid md:grid-cols-2 gap-6">
+
+            {/* Category Selection */}
             <FormField
               control={form.control}
               name="categoryId"
@@ -113,6 +118,34 @@ function CreateProductForm({ categories }) {
               )}
             />
 
+            {/* Color Selection */}
+            <FormField
+              control={form.control}
+              name="colorId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">Color</FormLabel>
+                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {colors?.map((c) => (
+                        <SelectItem key={c._id} value={c._id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+            {/* Product Name */}
             <FormField
               control={form.control}
               name="name"
@@ -190,6 +223,7 @@ function CreateProductForm({ categories }) {
               )}
             />
 
+            {/* Price */}
             <FormField
               control={form.control}
               name="price"
