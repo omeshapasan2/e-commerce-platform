@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { FaBox } from "react-icons/fa";
 import { FaBoxesStacked } from "react-icons/fa6";
@@ -34,6 +34,35 @@ export default function Navigation() {
     { path: "/shop/socks", label: "Socks" },
   ];
 
+  function NavItem({ to, children, onClick }) {
+    return (
+      <NavLink
+        to={to}
+        onClick={onClick}
+        className={({ isActive }) =>
+          [
+            // base
+            "relative inline-flex items-center font-medium text-gray-700 transition-colors duration-200",
+            "py-2",
+            // underline pseudo-element
+            "after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2",
+            "after:h-[2px] after:w-full after:bg-gray-900",
+            // start hidden (scale-x-0), grow from center on hover
+            "after:origin-center after:scale-x-0 hover:after:scale-x-100",
+            // smooth animation
+            "after:transition-transform after:duration-300",
+            // active state keeps the line shown
+            isActive ? "text-gray-900 after:scale-x-100" : "hover:text-gray-900",
+          ].join(" ")
+        }
+        aria-current={({ isActive }) => (isActive ? "page" : undefined)}
+      >
+        {children}
+      </NavLink>
+    );
+  }
+
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,13 +78,9 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex space-x-6 xl:space-x-8">
             {navigationItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 py-2"
-              >
+              <NavItem key={item.path} to={item.path}>
                 {item.label}
-              </Link>
+              </NavItem>
             ))}
           </nav>
 
@@ -154,19 +179,18 @@ export default function Navigation() {
               <ProductSearchForm />
             </div>
 
-            {/* Navigation Links */}
-            <div className="space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors duration-200"
-                  onClick={closeMobileMenu}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
+             {/* Navigation Links */}
+              <div className="space-y-1">
+                {navigationItems.map((item) => (
+                  <NavItem
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeMobileMenu}
+                  >
+                    <span className="block px-4 py-3 text-base">{item.label}</span>
+                  </NavItem>
+                ))}
+              </div>
 
             {/* Mobile Auth Links */}
             <div className="lg:hidden mt-6 pt-4 border-t border-gray-200">
