@@ -101,6 +101,7 @@ export default function AdminOrdersPage() {
           <div className="grid gap-6 lg:hidden">
             {orders.map((order) => {
               const status = formatStatus(order.paymentStatus, order.orderStatus);
+              const address = order.addressId || {};
               
               return (
                 <article key={order._id} className="border rounded-lg p-6 hover:shadow-sm transition-shadow">
@@ -138,6 +139,17 @@ export default function AdminOrdersPage() {
                       </div>
                     </div>
                   </header>
+                    
+                  {/* Address */}
+                  <div className="mb-4">
+                    <h3 className="font-medium mb-2 text-sm opacity-70 uppercase tracking-wide">Address</h3>
+                    <div className="text-sm space-y-1">
+                      <div>{address.line_1 || 'N/A'}</div>
+                      {address.line_2 && <div>{address.line_2}</div>}
+                      <div>{address.city || 'N/A'}</div>
+                      <div>{address.phone || 'N/A'}</div>
+                    </div>
+                  </div>
 
                   {order.items && order.items.length > 0 && (
                     <div>
@@ -184,6 +196,7 @@ export default function AdminOrdersPage() {
                 <tr className="text-left">
                   <th className="py-4 px-6 font-semibold text-sm">Order ID</th>
                   <th className="py-4 px-6 font-semibold text-sm">User</th>
+                  <th className="py-4 px-6 font-semibold text-sm">Address</th>
                   <th className="py-4 px-6 font-semibold text-sm">Items</th>
                   <th className="py-4 px-6 font-semibold text-sm">Amount</th>
                   <th className="py-4 px-6 font-semibold text-sm">Status</th>
@@ -193,19 +206,32 @@ export default function AdminOrdersPage() {
               <tbody className="divide-y divide-gray-200">
                 {orders.map((order, index) => {
                   const status = formatStatus(order.paymentStatus, order.orderStatus);
+                  const address = order.addressId || {};
                   
                   return (
                     <tr key={order._id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                      {/* Order ID */}
                       <td className="py-4 px-6">
                         <div className="font-mono text-sm break-all">
                           {order._id || 'Unknown'}
                         </div>
                       </td>
+                      {/* User ID */}
                       <td className="py-4 px-6">
                         <div className="text-sm break-all">
                           {order.userId || 'Unknown'}
                         </div>
                       </td>
+                      {/* Address */}
+                      <td className="py-4 px-6">
+                        <div className="text-sm space-y-1 break-words">
+                          <div>{address.line_1 || 'N/A'}</div>
+                          {address.line_2 && <div>{address.line_2}</div>}
+                          <div>{address.city || 'N/A'}</div>
+                          <div>{address.phone || 'N/A'}</div>
+                        </div>
+                      </td>
+                      {/* Items with expand/collapse */}
                       <td className="py-4 px-6">
                         <div className="max-w-xs">
                           {order.items && order.items.length > 0 ? (
@@ -262,6 +288,8 @@ export default function AdminOrdersPage() {
                           )}
                         </div>
                       </td>
+
+                      {/* Amount */}
                       <td className="py-4 px-6">
                         <div className="font-semibold text-lg">
                           ${order.amount?.toFixed?.(2) ?? order.amount ?? '0.00'}
@@ -277,6 +305,8 @@ export default function AdminOrdersPage() {
                           </div>
                         </div>
                       </td>
+
+                      {/* Created At */}
                       <td className="py-4 px-6">
                         <div className="text-sm">
                           {order.createdAt 
@@ -291,6 +321,7 @@ export default function AdminOrdersPage() {
                           }
                         </div>
                       </td>
+                      
                     </tr>
                   );
                 })}
