@@ -1,6 +1,6 @@
 # E-Commerce Platform
 
-A full-stack e-commerce application composed of a Node.js/Express backend and a React (Vite) frontend. It supports user authentication with Clerk, payments via Stripe, product image storage on Cloudflare R2, and is intended to be deployed with Render (backend) and Vercel (frontend).
+A full-stack e-commerce application composed of a Node.js/Express backend and a React (Vite) frontend. It supports user authentication with Clerk, payments via Stripe, product image storage on Cloudflare R2, and is intended to be deployed with Render (backend) and Vercel/Netlify (frontend).
 
 ## Features
 
@@ -79,7 +79,7 @@ VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ### Cloudflare R2 (Object Storage)
 1. Create an R2 bucket for product images
 2. Generate an access key pair and note the account ID
-3. (Optional) Configure a public domain to serve objects
+3. Configure a public domain to serve objects
 4. Provide the credentials via `CLOUDFLARE_*` variables
 
 ### Clerk (Authentication)
@@ -138,11 +138,11 @@ npm run seed
 ## Deployment Notes
 
 - **Render**: After deploying the backend, update the frontend's `VITE_BASE_URL` to the Render service URL
-- **Vercel**: Re-deploy whenever environment variables or the backend URL changes
+- **Vercel/Netlify**: Re-deploy whenever environment variables or the backend URL changes
 
 ## Acknowledgements
 
 - [Clerk](https://clerk.dev/) – user management
 - [Stripe](https://stripe.com/) – payment processing
 - [Cloudflare R2](https://developers.cloudflare.com/r2) – object storage
-- [Render](https://render.com/) & [Vercel](https://vercel.com/) – deployment platforms
+- [Render](https://render.com/) & [Vercel](https://vercel.com/) & [Netlify](https://netlify.com/) – deployment platforms
